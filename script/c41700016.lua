@@ -1,0 +1,78 @@
+--操纵密度的鬼 伊吹萃香
+function c41700016.initial_effect(c)
+	--xyz summon
+	aux.AddXyzProcedure(c,aux.FilterBoolFunction(Card.IsType,TYPE_NORMAL),4,2)
+	c:EnableReviveLimit()
+	--
+	local e1=Effect.CreateEffect(c)
+	e1:SetCategory(CATEGORY_ATKCHANGE)
+	e1:SetType(EFFECT_TYPE_QUICK_O)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetCode(EVENT_FREE_CHAIN)
+	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_CHAIN_UNIQUE)
+	e1:SetHintTiming(TIMING_DAMAGE_STEP)
+	e1:SetCountLimit(1)
+	e1:SetCondition(c41700016.atkcon)
+	e1:SetCost(c41700016.efcost)
+	e1:SetTarget(c41700016.eftg)
+	e1:SetOperation(c41700016.efop)
+	c:RegisterEffect(e1)
+end
+function c41700016.atkcon(e,tp,eg,ep,ev,re,r,rp)
+	local phase=Duel.GetCurrentPhase()
+	return phase~=PHASE_DAMAGE or (phase==PHASE_DAMAGE and not Duel.IsDamageCalculated())
+end
+function c41700016.efcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
+	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
+end
+function c41700016.eftg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	local op=Duel.SelectOption(tp,aux.Stringid(41700016,0),aux.Stringid(41700016,1))
+	e:SetLabel(op)
+end
+function c41700016.efop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if e:GetLabel()==0 then
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_SET_ATTACK_FINAL)
+		e1:SetValue(0)
+		e1:SetReset(RESET_EVENT+0x1ff0000+RESET_PHASE+PHASE_END)
+		c:RegisterEffect(e1)
+		local e2=e1:Clone()
+		e2:SetCode(EFFECT_SET_DEFENCE_FINAL)
+		c:RegisterEffect(e2)
+		local e3=Effect.CreateEffect(c)
+		e3:SetType(EFFECT_TYPE_SINGLE)
+		e3:SetCode(EFFECT_CANNOT_BE_BATTLE_TARGET)
+		e3:SetRange(LOCATION_MZONE)
+		e3:SetValue(1)
+		e1:SetReset(RESET_EVENT+0x1ff0000+RESET_PHASE+PHASE_END)
+		c:RegisterEffect(e3)
+		local e4=e3:Clone()
+		e4:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+		e4:SetProperty(EFFECT_FLAG_IGNORE_RANGE)
+		e4:SetValue(c41700016.tgvalue)
+		c:RegisterEffect(e4)
+	else
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_UPDATE_ATTACK)
+		e1:SetValue(1000)
+		e1:SetReset(RESET_EVENT+0x1ff0000+RESET_PHASE+PHASE_END)
+		c:RegisterEffect(e1)
+		local e2=e1:Clone()
+		e2:SetCode(EFFECT_UPDATE_DEFENCE)
+		c:RegisterEffect(e2)
+		local e3=Effect.CreateEffect(c)
+		e3:SetType(EFFECT_TYPE_SINGLE)
+		e3:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+		e3:SetValue(1)
+		e3:SetReset(RESET_EVENT+0x1ff0000+RESET_PHASE+PHASE_END)
+		c:RegisterEffect(e3)
+	end
+end
+function c41700016.tgvalue(e,re,rp)
+	return rp~=e:GetHandlerPlayer()
+end
