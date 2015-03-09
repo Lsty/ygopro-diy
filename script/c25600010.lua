@@ -1,6 +1,6 @@
 --美波的召唤兽
 function c25600010.initial_effect(c)
-	--cannot destroy
+	--cannot destroy 
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
